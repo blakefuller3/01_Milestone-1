@@ -3,11 +3,12 @@
 \usepackage[super]{nth}
 \geometry{a4paper}
 \usepackage{algorithm}
-\usepackage{amsmath}
+
 \usepackage{algpseudocode}
 \usepackage{graphicx}
 \usepackage{microtype}
 \usepackage{pdfpages}
+\usepackage[framed,numbered,autolinebreaks,useliterate]{mcode}
 \PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}\usepackage{hyperref}
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
@@ -17,8 +18,8 @@
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
 
 \pagestyle{fancy}
-\lhead{Storm \emph{Proposal}}
-\lfoot{QUT EESS}
+\lhead{ENB440 - \emph{Milestone 1}}
+\lfoot{ENB440 \emph{Group 06}}
 
 \begin{document}
 \newpage
@@ -46,12 +47,15 @@
 \begin{flushleft} \large
 Grant \textsc{Kennedy} \\
 \emph{n8566712}\\
+Blake \textsc{Fuller} \\
+\emph{n8598819}\\
 \end{flushleft}
 \end{minipage}
 \begin{minipage}{0.4\textwidth}
 \begin{flushright} \large
-Blake \textsc{Fuller} \\
-\emph{n8598819}\\
+
+
+\emph{Group 06}\\
 \end{flushright}
 \end{minipage}
 
@@ -75,9 +79,18 @@ CST modeling methods and S parameters are evaluated in section ~\ref{sec:CST}. P
 \tableofcontents
 
 \newpage
-\section{Scope}
+\section{Introduction}
+This report details the design of a simple 70$\Omega$ microstrip Printed Circuit Board (PCB) using Rogers RO4003C. \\
 
+Circuit characteristics are calculated in three ways:
 
+\begin{enumerate}
+	\item Hand calculations
+	\item MATLAB calculations
+	\item Computer generated results\\
+\end{enumerate}
+
+These are compared before modeling the system within the CST software suite.\\
 \newpage
 \section{Line Impedance Calculations}
 \subsection{Hand Calculations}
@@ -151,7 +164,7 @@ S_{22} &= \frac{5}{12} \\
 &= 20log(S_{22})= -7.6042dB
 \end{align}
 \subsection{Matlab Results}
-We attempted to replicate the hand calculations in Matlab in order to model the S paramaters over the 2-4 GHz range where length was constant. The code to perform the calculations is noted in the APPENDIX and Figure ~\ref{fig:matlab_S} was generated.
+We attempted to replicate the hand calculations in Matlab in order to model the S paramaters over the 2-4 GHz range where length was constant. The code to perform the calculations is noted in the appendix 1 and figure ~\ref{fig:matlab_S} was generated.
 
 \begin{figure}[H]
 	\centering
@@ -176,9 +189,6 @@ Figure ~\ref{fig:varying_l} shows the S parameters matching the values from the 
 \end{figure}
 
 This exercise has served to highlight the usefulness of CST for modelling this system.
-
-
-
 
 
 \subsection{Computer Generated Results}
@@ -247,11 +257,103 @@ All S parameter phase plots are linear, as expected. \\
 
 The S$_{11}$ and S$_{22}$ plots have an abnormality at 2.7714GHz, which is caused by the passband peak.\\
 
+The line impedance, as calculated by CST, is seen to be 51$\Omega$, which is noticeably different to the expected value of 70$\Omega$. Initially, all geometries and material parameters were checked to ensure that this value wasn't an issue with the model. After thorough inspection no errors were found with the model.\\
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{IMG/51ohm}
+	\caption{Original line impedance.}
+	\label{fig:orig_line_imp}
+\end{figure}
+
+\newpage
 \subsection{CST Optimiser}
-The CST optimisation software 
+The optimiser was used to calculate geometries needed to achieve a line impedance of 70$\Omega$. As the electrical length, height of dielectric and copper thickness all couldn't be altered, the microstrip width was chosen as the variable to optimise.\\
 
+After optimisation, the following line impedance was found.\\
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{IMG/70ohm}
+	\caption{Modified line impedance.}
+	\label{fig:mod_line_imp}
+\end{figure}
 
+The optimisation software altered the original microstrip width of 0.9676mm to 0.5536mm which resulted in a line impedance of 70$\Omega$. The resulting S$_{11}$ and S$_{22}$ parameters can be seen below. There is no notable different information in the S$_{21}$ and S$_{12}$ parameters.
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{IMG/70ohm_s11_s22}
+	\caption{Modified line impedance.}
+	\label{fig:mod_line_s11_s22}
+\end{figure}
+
+It can be seen that the optimisation method has matched the line impedance to the required impedance. The reflection peak has also moved closer to the operating frequency.
+
+\newpage
+\section{Conclusion}
+Doing similar calculations in three different ways has been helpful in understanding the processes that go on under the hood of established programs. By calculating the microstrip characteristics manually one can get a feel for how a problem will be solved and whether output values seem realistic. \\
+
+Familiarity with these kinds of processes can also come through many repetitions of using purpose built programs like CST. It allows for rapid iteration and gainful experimentation with differing system geometries. CST also allows for fine tuning of results once they are obtained to make small gains which could mean the difference between meeting specification or not.\\
+
+The hand calculations and MATLAB calculations are less precise methods of calculating S parameters as they don't account for factors such as dielectric and conductor losses. \\
+
+In this way, the first methods of system characterisation are important and very much have their place, but a design suite is needed for full system design.
+
+\newpage
+\section{Appendices}
+\subsection{MATLAB Script}
+\begin{lstlisting}
+%% ENB440
+clc
+clear
+close all
+%% Q2:
+
+c = 299792458; % Speed of light
+f = (2:0.01:4)*10^(9); % 2-4 GHz Sweep
+epr = 3.55;             %Given material relative permitivity
+w = 0.967672*10^(-3); % Width
+d = 0.8128*10^(-3); %Substrate Thickness
+
+% epeff = (epr+1)/2+(epr-1)/2*1/sqrt(1+12*d/w); % Effective permitivity
+epeff = 2.6126765618828367;% Calculated Effective Permitivity
+lambda = c./f./sqrt(epeff);
+l = 4*15.466682984821468*10^-3; % Calculated Length
+beta = 2*pi./lambda;
+
+z1 = 50;
+z2 = 50;
+z0 = 70;
+y0 = 1/z0;
+ABCD = zeros (2,2,length(f));
+for i=1: length(f)
+    ABCD(:,:,i) = [1 z1; 0 1]*[cos(beta(i)*l) 1j*z0*sin(beta(i)*l); 1j*y0*sin(beta(i)*l) cos(beta(i)*l)]...
+        *[1 z2; 0 1]*[cos(beta(i)*l) 1j*z0*sin(beta(i)*l); 1j*y0*sin(beta(i)*l) cos(beta(i)*l)];
+end
+A = squeeze(ABCD(1,1,:))';
+B = squeeze(ABCD(1,2,:))';
+C = squeeze(ABCD(2,1,:))';
+D = squeeze(ABCD(2,2,:))';
+
+s11 = 20*log10(((A+B./z0-C*z0-D)./(A+B./z0+C.*z0+D)));
+s12 = 20*log10((2*(A.*D-B.*C))./(A+B./z0+C.*z0+D));
+s21 = 20*log10((2)./(A+B/z0+C.*z0+D));
+s22 = 20*log10((-A+B./z0-C*z0+D)./(A+B./z0+C.*z0+D));
+
+figure();
+plot (f,(s11))
+hold on
+plot (f,(s21),'k')
+plot (f,(s12),'g--')
+plot (f,(s22),'r--')
+
+legend('S_1_1','S_2_1','S_1_2','S_2_2','location','east')
+grid on
+title('Calculated S Paramaters');
+xlabel('Frequency (Hz)');
+ylabel('Magnitude (Db)');
+\end{lstlisting}
+Appendix 1: MATLAB
 
 \end{document}
