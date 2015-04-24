@@ -150,6 +150,37 @@ S_{22} &= \frac{-1+100/70-0+1}{1+100/70+0+1}\\
 S_{22} &= \frac{5}{12} \\
 &= 20log(S_{22})= -7.6042dB
 \end{align}
+\subsection{Matlab Results}
+We attempted to replicate the hand calculations in Matlab in order to model the S paramaters over the 2-4 GHz range where length was constant. The code to perform the calculations is noted in the APPENDIX and Figure ~\ref{fig:matlab_S} was generated.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{IMG/ideal_sweep}
+	\caption{S Paramaters from 2-4 GHz}
+	\label{fig:matlab_S}
+\end{figure}
+
+This plot did not satisfactorily match our expectations for an ideal sweep of the circuits scattering parameters. This is because it shows the attenuation of reflection decreasing towards the design frequency. Our expectation was for the opposite to happen as is seen in the section on Computer Generated Results.
+
+One reason the difference may have occurred is that the line was modelled in ABCD as:
+$$Load->Line->Load->Line$$
+where both loads and lines were considered equal. The ground plain would possibly have differences to the copper strip and could very well account for an error. It is reasonable to conclude that the code may be performing an incorrect process to measure the scattering parameters of this system as it is so different to the result in CST. The amount of work required to make this graph alone shows the usefulness of CST for this task.
+
+Figure ~\ref{fig:varying_l} shows the S parameters matching the values from the hand calculations. This is due to the length being changed across the frequency range to stay at 1 wavelength.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{IMG/varying_l}
+	\caption{S Paramaters from 2-4 GHz}
+	\label{fig:varying_l}
+\end{figure}
+
+This exercise has served to highlight the usefulness of CST for modelling this system.
+
+
+
+
+
 \subsection{Computer Generated Results}
 \label{sec:tx-line}
 The National Instruments (NI) program TX-Line was used to generate an approximation of the microstrip geometry. The given laminate, impedance, frequency and electrical length information were input and the program output the microstrip width and length. \\
