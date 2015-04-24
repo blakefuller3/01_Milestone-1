@@ -73,7 +73,9 @@ Transmission and reflection characteristics are first calculated in section ~\re
 
 CST modeling methods and S parameters are evaluated in section ~\ref{sec:CST}. Passband, return loss and transmission are discussed in terms of the microstrip S parameters.\\
 
-\textbf{talk about conclusion}
+Optimisation within CST is discussed and results are displayed in section ~\ref{sec:optimise}. Conclusions are draw on the exercise and different design methods in section ~\ref{sec:conclusion}.\\
+
+A microstrip design is presented with full analysis of its characteristics.\\ 
 
 \newpage
 \tableofcontents
@@ -268,7 +270,10 @@ The line impedance, as calculated by CST, is seen to be 51$\Omega$, which is not
 
 \newpage
 \subsection{CST Optimiser}
-The optimiser was used to calculate geometries needed to achieve a line impedance of 70$\Omega$. As the electrical length, height of dielectric and copper thickness all couldn't be altered, the microstrip width was chosen as the variable to optimise.\\
+\label{sec:optimise}
+The optimiser was used to calculate geometries needed to achieve a line impedance of 70$\Omega$. The goal of modifying the S$_{11}$ parameter was judged as being irrelevant given the system is to be designed with a line impedance of 70$\Omega$ with 50$\Omega$ ports.\\ 
+
+As the electrical length, height of dielectric and copper thickness all couldn't be altered, the microstrip width was chosen as the variable to optimise.\\
 
 After optimisation, the following line impedance was found.\\
 
@@ -292,6 +297,7 @@ It can be seen that the optimisation method has matched the line impedance to th
 
 \newpage
 \section{Conclusion}
+\label{sec:conclusion}
 Doing similar calculations in three different ways has been helpful in understanding the processes that go on under the hood of established programs. By calculating the microstrip characteristics manually one can get a feel for how a problem will be solved and whether output values seem realistic. \\
 
 Familiarity with these kinds of processes can also come through many repetitions of using purpose built programs like CST. It allows for rapid iteration and gainful experimentation with differing system geometries. CST also allows for fine tuning of results once they are obtained to make small gains which could mean the difference between meeting specification or not.\\
